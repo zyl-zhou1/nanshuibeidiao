@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>南水北调工程动态路线图</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 动态地图容器样式 */
+        .animated-map-container {
+            position: relative;
+            width: 100%;
+            height: 700px;
+            background: linear-gradient(135deg, #0a192f 0%, #1a2b3c 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            margin: 40px 0;
+        }
+
+        #animatedCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* 星空背景 */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* 控制面板 */
+        .animation-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            min-width: 280px;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .control-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .control-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .control-btn.active {
+            background: #2c3e50;
+        }
+
+        .control-btn i {
+            font-size: 1.1em;
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #e0e0e0;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 路线选择 */
+        .route-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .route-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .route-option:hover {
+            background: #f8f9fa;
+        }
+
+        .route-option.active {
+            background: #3498db20;
+            border-left: 3px solid #3498db;
+        }
+
+        .route-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .route-name {
+            flex: 1;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .route-status {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+
+        /* 信息面板 */
+        .info-panel-animated {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 300px;
+            backdrop-filter: blur(10px);
+            border-left: 4px solid #3498db;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .info-panel-animated h3 {
+            margin: 0 0 10px 0;
+            color: #fff;
+            font-size: 1.1em;
+        }
+
+        .info-panel-animated p {
+            margin: 0;
+            color: #ccc;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        /* 粒子效果 */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* 时间轴动画 */
+        .timeline-progress {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 250px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .timeline-progress h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .year-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .animated-map-container {
+                height: 500px;
+            }
+            
+            .animation-controls {
+                position: static;
+                width: 100%;
+                margin-bottom: 20px;
+                min-width: auto;
+            }
+            
+            .info-panel-animated {
+                position: static;
+                max-width: 100%;
+                margin-top: 20px;
+            }
+            
+            .timeline-progress {
+                position: static;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← 返回首页</a>
+    
+    <div class="container" style="margin-top: 70px;">
+        <header class="header">
+            <h1 style="font-family: '楷体', 'KaiTi', serif;">南水北调工程动态路线图</h1>
+            <p class="subtitle">水流动态模拟 · 粒子流动动画 · 实时数据展示</p>
+        </header>
+
+        <!-- 动态地图容器 -->
+        <div class="animated-map-container">
+            <canvas id="animatedCanvas"></canvas>
+            
+            <!-- 星空背景 -->
+            <div id="stars"></div>
+            
+            <!-- 控制面板 -->
+            <div class="animation-controls">
+                <div class="control-header">
+                    <h3>动画控制</h3>
+                </div>
+                
+                <div class="control-buttons">
+                    <button class="control-btn" id="playBtn">
+                        <span>▶ 播放</span>
+                    </button>
+                    <button class="control-btn" id="pauseBtn">
+                        <span>⏸ 暂停</span>
+                    </button>
+                    <button class="control-btn" id="resetBtn">
+                        <span>↺ 重置</span>
+                    </button>
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>动画速度</span>
+                        <span id="speedValue">1.0x</span>
+                    </div>
+                    <input type="range" min="0.1" max="3" step="0.1" value="1" class="slider" id="speedSlider">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>粒子密度</span>
+                        <span id="densityValue">中等</span>
+                    </div>
+                    <input type="range" min="1" max="5" step="1" value="3" class="slider" id="densitySlider">
+                </div>
+                
+                <div class="route-selector">
+                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">路线选择</h4>
+                    <div class="route-option active" data-route="east">
+                        <div class="route-color" style="background: #e74c3c;"></div>
+                        <div class="route-name">东线工程</div>
+                        <div class="route-status">已建成</div>
+                    </div>
+                    <div class="route-option active" data-route="middle">
+                        <div class="route-color" style="background: #3498db;"></div>
+                        <div class="route-name">中线工程</div>
+                        <div class="route-status">已建成</div>
+                    </div>
+                    <div class="route-option active" data-route="west">
+                        <div class="route-color" style="background: #f39c12;"></div>
+                        <div class="route-name">西线工程</div>
+                        <div class="route-status">规划中</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 信息面板 -->
+            <div class="info-panel-animated" id="infoPanel">
+                <h3 id="infoTitle">南水北调动态路线</h3>
+                <p id="infoContent">点击地图上的路线或城市查看详细信息。水流动画模拟实际调水过程。</p>
+                
+                <div class="stats-display" id="statsDisplay">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statWater">800亿+</div>
+                        <div class="stat-label">累计调水量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statPeople">1.85亿</div>
+                        <div class="stat-label">受益人口</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 时间轴进度 -->
+            <div class="timeline-progress">
+                <h4>工程建设进度</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 80%"></div>
+                </div>
+                <div class="year-display">
+                    <span>1952年</span>
+                    <span id="currentYear">2025年</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 工程介绍 -->
+        <div class="intro-content" style="margin-top: 40px;">
+            <div class="intro-text">
+                <h2>📊 总体规划</h2>
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 10px; margin: 10px 0; font-family: 'Courier New', monospace;">
+                    <div style="font-weight: bold; margin-bottom: 10px;">总体规划最终调水规模：448亿立方米</div>
+                    <div style="line-height: 1.6; font-size: 0.9em;">
+                        <div>├── 东线工程：148亿立方米/年，全长1466.50千米</div>
+                        <div>├── 中线工程：130亿立方米/年，全长1431.945千米</div>
+                        <div>└── 西线工程：170亿立方米/年（规划中）</div>
+                    </div>
+                </div>
+                
+                <h2>动态路线图特点</h2>
+                <p><strong>粒子流动动画</strong>：使用Canvas技术模拟水流沿路线流动的视觉效果，每个粒子代表一定量的水资源。</p>
+                
+                <h3>实时数据展示</h3>
+                <p>动态显示调水量、受益人口、工程进度等关键数据，数据随时间变化实时更新。</p>
+                
+                <h3>交互控制</h3>
+                <ul>
+                    <li><strong>播放/暂停</strong>：控制动画播放状态</li>
+                    <li><strong>速度调节</strong>：调整水流动画速度</li>
+                    <li><strong>路线选择</strong>：单独显示或隐藏各条路线</li>
+                    <li><strong>粒子密度</strong>：调整水流粒子的密集程度</li>
+                </ul>
+            </div>
+            
+            <div class="intro-text">
+                <h2>技术实现</h2>
+                <p>本动态地图使用HTML5 Canvas和JavaScript实现，主要技术特点：</p>
+                
+                <h3>粒子系统</h3>
+                <p>模拟水流粒子的运动轨迹，每个粒子具有独立的位置、速度和生命周期。</p>
+                
+                <h3>路径跟随</h3>
+                <p>粒子沿南水北调工程的实际路线运动，路径数据来自真实地理坐标。</p>
+                
+                <h3>性能优化</h3>
+                <p>使用Web Workers处理复杂计算，确保动画流畅运行，支持高帧率渲染。</p>
+                
+                <h3>响应式设计</h3>
+                <p>适配各种屏幕尺寸，在桌面和移动设备上都能获得良好的视觉体验。</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="route-data.js"></script>
+    <script>
+        // 全局变量
+        let canvas, ctx;
+        let animationId = null;
+        let isPlaying = true;
+        let animationSpeed = 1.0;
+        let particleDensity = 3;
+        
+        // 路线数据
+        let routes = {};
+        let particles = [];
+        let cities = [];
+        
+        // 地图参数
+        const mapWidth = 800;
+        const mapHeight = 600;
+        const scaleFactor = 8;
+        const offsetX = 95;
+        const offsetY = 20;
+        
+        // 初始化函数
+        document.addEventListener('DOMContentLoaded', function() {
+            initCanvas();
+            initRoutes();
+            initCities();
+            createStars();
+            initControls();
+            startAnimation();
+            
+            // 初始显示统计信息
+            updateStatistics();
+        });
+        
+        function initCanvas() {
+            canvas = document.getElementById('animatedCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // 设置Canvas尺寸
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        }
+        
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            drawStaticElements();
+        }
+        
+        function initRoutes() {
+            // 转换路线数据为Canvas坐标
+            const data = southNorthWaterTransferData;
+            
+            routes = {
+                east: convertRoutePoints(data.eastRoute.routePoints),
+                middle: convertRoutePoints(data.middleRoute.routePoints),
+                west: convertRoutePoints(data.westRoute.routePoints)
+            };
+        }
+        
+        function convertRoutePoints(points) {
+            return points.map(point => ({
+                x: (point.x - offsetX) * scaleFactor,
+                y: mapHeight - (point.y - offsetY) * scaleFactor,
+                name: point.name,
+                type: point.type
+            }));
+        }
+        
+        function initCities() {
+            // 添加主要城市
+            cities = [
+                // 东线城市
+                { name: '扬州', x: 120.5, y: 32.4, route: 'east' },
+                { name: '淮安', x: 119.0, y: 33.5, route: 'east' },
+                { name: '徐州', x: 117.2, y: 34.3, route: 'east' },
+                { name: '济南', x: 117.0, y: 36.7, route: 'east' },
+                { name: '天津', x: 117.2, y: 39.1, route: 'east' },
+                
+                // 中线城市
+                { name: '丹江口', x: 111.5, y: 32.6, route: 'middle' },
+                { name: '南阳', x: 112.5, y: 33.0, route: 'middle' },
+                { name: '郑州', x: 113.6, y: 34.8, route: 'middle' },
+                { name: '石家庄', x: 114.5, y: 38.0, route: 'middle' },
+                { name: '北京', x: 116.4, y: 39.9, route: 'middle' },
+                
+                // 西线地点
+                { name: '通天河', x: 95.0, y: 33.5, route: 'west' },
+                { name: '雅砻江', x: 100.5, y: 32.0, route: 'west' },
+                { name: '大渡河', x: 102.0, y: 30.5, route: 'west' },
+                { name: '黄河上游', x: 101.5, y: 35.0, route: 'west' }
+            ].map(city => ({
+                ...city,
+                x: (city.x - offsetX) * scaleFactor,
+                y: mapHeight - (city.y - offsetY) * scaleFactor,
+                radius: 8,
+                pulse: 0
+            }));
+        }
+        
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // 随机位置
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机闪烁速度
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        function initControls() {
+            // 播放/暂停按钮
+            document.getElementById('playBtn').addEventListener('click', () => {
+                if (!isPlaying) {
+                    isPlaying = true;
+                    startAnimation();
+                }
+            });
+            
+            document.getElementById('pauseBtn').addEventListener('click', () => {
+                isPlaying = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+            });
+            
+            // 重置按钮
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                particles = [];
+                updateStatistics();
+            });
+            
+            // 速度滑块
+            const speedSlider = document.getElementById('speedSlider');
+            const speedValue = document.getElementById('speedValue');
+            
+            speedSlider.addEventListener('input', function() {
+                animationSpeed = parseFloat(this.value);
+                speedValue.textContent = `${animationSpeed.toFixed(1)}x`;
+            });
+            
+            // 密度滑块
+            const densitySlider = document.getElementById('densitySlider');
+            const densityValue = document.getElementById('densityValue');
+            
+            densitySlider.addEventListener('input', function() {
+                particleDensity = parseInt(this.value);
+                const densityText = ['很低', '较低', '中等', '较高', '很高'];
+                densityValue.textContent = densityText[particleDensity - 1];
+            });
+            
+            // 路线选择
+            document.querySelectorAll('.route-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const route = this.getAttribute('data-route');
+                    // 路线显示状态由绘制函数处理
+                });
+            });
+            
+            // Canvas点击事件
+            canvas.addEventListener('click', function(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // 检测点击路线
+                checkRouteClick(x, y);
+                
+                // 检测点击城市
+                checkCityClick(x, y);
+            });
+        }
+        
+        function startAnimation() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            
+            function animate() {
+                if (isPlaying) {
+                    updateParticles();
+                    draw();
+                    generateParticles();
+                }
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function generateParticles() {
+            // 根据密度设置生成粒子
+            const densityMap = [5, 10, 20, 40, 80];
+            const particlesToGenerate = densityMap[particleDensity - 1] * animationSpeed;
+            
+            for (let i = 0; i < particlesToGenerate; i++) {
+                // 随机选择一条活跃的路线
+                const activeRoutes = ['east', 'middle', 'west'].filter(route => {
+                    const option = document.querySelector(`.route-option[data-route="${route}"]`);
+                    return option && option.classList.contains('active');
+                });
+                
+                if (activeRoutes.length === 0) continue;
+                
+                const routeType = activeRoutes[Math.floor(Math.random() * activeRoutes.length)];
+                const route = routes[routeType];
+                if (route.length < 2) continue;
+                
+                // 创建粒子
+                const particle = {
+                    route: routeType,
+                    progress: 0,
+                    speed: (Math.random() * 0.005 + 0.002) * animationSpeed,
+                    size: Math.random() * 3 + 2,
+                    color: getRouteColor(routeType),
+                    opacity: Math.random() * 0.5 + 0.5,
+                    pathIndex: 0
+                };
+                
+                particles.push(particle);
+                
+                // 限制粒子数量
+                if (particles.length > 2000) {
+                    particles.shift();
+                }
+            }
+        }
+        
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                const route = routes[particle.route];
+                
+                particle.progress += particle.speed;
+                
+                if (particle.progress >= 1) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+                
+                // 计算粒子在路径上的位置
+                const segmentIndex = Math.floor(particle.progress * (route.length - 1));
+                const segmentProgress = (particle.progress * (route.length - 1)) - segmentIndex;
+                
+                if (segmentIndex < route.length - 1) {
+                    const p1 = route[segmentIndex];
+                    const p2 = route[segmentIndex + 1];
+                    
+                    particle.x = p1.x + (p2.x - p1.x) * segmentProgress;
+                    particle.y = p1.y + (p2.y - p1.y) * segmentProgress;
+                }
+            }
+        }
+        
+        function draw() {
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制静态元素
+            drawStaticElements();
+            
+            // 绘制路线
+            drawRoutes();
+            
+            // 绘制城市
+            drawCities();
+            
+            // 绘制粒子
+            drawParticles();
+        }
+        
+        function drawStaticElements() {
+            // 绘制背景渐变
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#0a192f');
+            gradient.addColorStop(1, '#1a2b3c');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制中国地图轮廓（简化版）
+            ctx.strokeStyle = 'rgba(52, 152, 219, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            // 这里可以添加更详细的中国地图轮廓
+            ctx.rect(canvas.width * 0.2, canvas.height * 0.1, canvas.width * 0.6, canvas.height * 0.8);
+            ctx.stroke();
+        }
+        
+        function drawRoutes() {
+            // 绘制路线基础路径
+            Object.keys(routes).forEach(routeType => {
+                const route = routes[routeType];
+                const option = document.querySelector(`.route-option[data-route="${routeType}"]`);
+                
+                if (!option || !option.classList.contains('active')) return;
+                
+                if (route.length < 2) return;
+                
+                ctx.strokeStyle = getRouteColor(routeType);
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                
+                ctx.moveTo(route[0].x, route[0].y);
+                for (let i = 1; i < route.length; i++) {
+                    ctx.lineTo(route[i].x, route[i].y);
+                }
+                
+                ctx.stroke();
+                
+                // 绘制路线发光效果
+                ctx.shadowColor = getRouteColor(routeType);
+                ctx.shadowBlur = 15;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            });
+        }
+        
+        function drawCities() {
+            cities.forEach(city => {
+                // 城市脉冲效果
+                city.pulse = (city.pulse + 0.05) % (Math.PI * 2);
+                const pulseScale = 1 + Math.sin(city.pulse) * 0.2;
+                
+                ctx.fillStyle = getRouteColor(city.route);
+                ctx.beginPath();
+                ctx.arc(city.x, city.y, city.radius * pulseScale, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 城市发光效果
+                ctx.shadowColor = getRouteColor(city.route);
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                
+                // 城市标签
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(city.name, city.x, city.y - city.radius * 2);
+            });
+        }
+        
+        function drawParticles() {
+            particles.forEach(particle => {
+                ctx.fillStyle = particle.color;
+                ctx.globalAlpha = particle.opacity;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                
+                // 粒子拖尾效果
+                ctx.strokeStyle = particle.color;
+                ctx.lineWidth = particle.size / 2;
+                ctx.beginPath();
+                ctx.moveTo(particle.x, particle.y);
+                
+                // 简单拖尾
+                const tailLength = 10;
+                ctx.lineTo(
+                    particle.x - tailLength * Math.cos(particle.progress * Math.PI * 2),
+                    particle.y - tailLength * Math.sin(particle.progress * Math.PI * 2)
+                );
+                ctx.stroke();
+            });
+        }
+        
+        function getRouteColor(routeType) {
+            const colors = {
+                'east': '#e74c3c',
+                'middle': '#3498db',
+                'west': '#f39c12'
+            };
+            return colors[routeType] || '#ffffff';
+        }
+        
+        function checkRouteClick(x, y) {
+            // 简化：检查是否点击路线附近
+            Object.keys(routes).forEach(routeType => {
+                const route = routes[routeType];
+                for (let i = 0; i < route.length - 1; i++) {
+                    const p1 = route[i];
+                    const p2 = route[i + 1];
+                    
+                    // 计算点到线段的距离
+                    const distance = pointToLineDistance(x, y, p1.x, p1.y, p2.x, p2.y);
+                    
+                    if (distance < 10) {
+                        showRouteInfo(routeType);
+                        return;
+                    }
+                }
+            });
+        }
+        
+        function checkCityClick(x, y) {
+            cities.forEach(city => {
+                const distance = Math.sqrt((x - city.x) ** 2 + (y - city.y) ** 2);
+                if (distance < city.radius * 2) {
+                    showCityInfo(city);
+                    return;
+                }
+            });
+        }
+        
+        function pointToLineDistance(px, py, x1, y1, x2, y2) {
+            const A = px - x1;
+            const B = py - y1;
+            const C = x2 - x1;
+            const D = y2 - y1;
+            
+            const dot = A * C + B * D;
+            const lenSq = C * C + D * D;
+            let param = -1;
+            
+            if (lenSq !== 0) {
+                param = dot / lenSq;
+            }
+            
+            let xx, yy;
+            
+            if (param < 0) {
+                xx = x1;
+                yy = y1;
+            } else if (param > 1) {
+                xx = x2;
+                yy = y2;
+            } else {
+                xx = x1 + param * C;
+                yy = y1 + param * D;
+            }
+            
+            const dx = px - xx;
+            const dy = py - yy;
+            
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        function showRouteInfo(routeType) {
+            const routeData = southNorthWaterTransferData[`${routeType}Route`];
+            if (!routeData) return;
+            
+            const infoTitle = document.getElementById('infoTitle');
+            const infoContent = document.getElementById('infoContent');
+            
+            infoTitle.textContent = routeData.name;
+            infoContent.innerHTML = `
+                <strong>工程状态：</strong>${routeData.status}<br>
+                <strong>总长度：</strong>${routeData.totalLength}公里<br>
+                <strong>年调水量：</strong>${routeData.annualWaterTransfer}亿立方米<br>
+                <strong>累计调水：</strong>${routeData.cumulativeWaterTransfer}亿立方米<br>
+                <strong>主要工程：</strong>${routeData.keyProjects.join('、')}
+            `;
+            
+            // 更新统计显示
+            updateRouteStatistics(routeType);
+        }
+        
+        function showCityInfo(city) {
+            const infoTitle = document.getElementById('infoTitle');
+            const infoContent = document.getElementById('infoContent');
+            
+            infoTitle.textContent = city.name;
+            infoContent.innerHTML = `
+                <strong>所属路线：</strong>${getRouteName(city.route)}<br>
+                <strong>地理位置：</strong>重要节点城市<br>
+                <strong>工程作用：</strong>调水工程关键节点
+            `;
+        }
+        
+        function getRouteName(routeType) {
+            const names = {
+                'east': '东线工程',
+                'middle': '中线工程',
+                'west': '西线工程'
+            };
+            return names[routeType] || '未知路线';
+        }
+        
+        function updateRouteStatistics(routeType) {
+            const routeData = southNorthWaterTransferData[`${routeType}Route`];
+            const statsDisplay = document.getElementById('statsDisplay');
+            
+            statsDisplay.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${routeData.totalLength}公里</div>
+                    <div class="stat-label">路线长度</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${routeData.annualWaterTransfer}亿m³</div>
+                    <div class="stat-label">年调水量</div>
+                </div>
+            `;
+        }
+        
+        function updateStatistics() {
+            const stats = waterStatistics;
+            document.getElementById('statWater').textContent = `${stats.totalWaterTransfer}亿+`;
+            document.getElementById('statPeople').textContent = `${stats.directBeneficiaries}亿`;
+        }
+        
+        // 性能优化：使用requestAnimationFrame
+        function optimizeAnimation() {
+            // 根据帧率调整粒子生成
+            let lastTime = 0;
+            const targetFPS = 60;
+            
+            function animate(time) {
+                const deltaTime = time - lastTime;
+                lastTime = time;
+                
+                if (isPlaying) {
+                    // 根据帧率调整更新频率
+                    if (deltaTime < 1000 / targetFPS) {
+                        updateParticles();
+                        draw();
+                        generateParticles();
+                    }
+                }
+                
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            animationId = requestAnimationFrame(animate);
+        }
+    </script>
+</body>
+</html>

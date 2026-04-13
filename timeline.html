@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>南水北调工程大事记</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="index.html" class="back-button">← 返回首页</a>
+    
+    <div class="container" style="margin-top: 70px;">
+        <header class="header">
+            <h1 style="font-family: '楷体', 'KaiTi', serif;">南水北调工程大事记</h1>
+            <p class="subtitle">重要历史节点</p>
+        </header>
+
+        <div class="timeline-overview">
+            <div class="timeline-line"></div>
+            <div class="timeline-items" id="timelineItems"></div>
+        </div>
+
+        <footer class="footer">
+            <p>点击年份卡片查看该年详细事件</p>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // 时间轴概览页面功能
+document.addEventListener('DOMContentLoaded', function() {
+    renderTimelineOverview();
+    
+    // 添加点击事件
+    setTimeout(() => {
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const year = this.getAttribute('data-year');
+                if (year) {
+                    window.location.href = `year-details.html?year=${year}`;
+                }
+            });
+        });
+    }, 100);
+});
+
+function renderTimelineOverview() {
+    const container = document.getElementById('timelineItems');
+    
+    timelineData.forEach(yearData => {
+        const mainImage = getYearMainImage(yearData);
+        container.appendChild(createTimelineItem(yearData, mainImage));
+    });
+}
+
+function createTimelineItem(yearData, mainImage) {
+    const timelineItem = document.createElement('div');
+    timelineItem.className = 'timeline-item';
+    timelineItem.setAttribute('data-year', yearData.year);
+    
+    const imageHTML = mainImage ? 
+        `<img src="照片/${mainImage}" alt="${yearData.summary}" class="year-image" onerror="this.style.display='none'">` : '';
+    
+    timelineItem.innerHTML = `
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <div class="year-number">${yearData.year}年</div>
+            <div class="year-summary">${yearData.summary}</div>
+            ${imageHTML}
+        </div>
+    `;
+    
+    return timelineItem;
+}
+
+function getYearMainImage(yearData) {
+    const eventsWithImages = yearData.events.filter(event => event.image);
+    if (eventsWithImages.length > 0) {
+        const highestImportance = Math.max(...eventsWithImages.map(event => event.importance));
+        const mainEvent = eventsWithImages.find(event => event.importance === highestImportance);
+        return mainEvent ? mainEvent.image : null;
+    }
+    return null;
+}
+    </script>
+</body>
+</html>

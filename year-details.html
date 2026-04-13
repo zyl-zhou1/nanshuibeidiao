@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>南水北调工程 - 详细事件</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <button class="back-btn" onclick="goBack()">← 返回概览</button>
+            <h1 id="yearTitle">南水北调工程大事记</h1>
+            <p class="subtitle" id="yearSubtitle">年份详细事件</p>
+        </header>
+
+        <div class="year-timeline" id="yearTimeline"></div>
+
+        <!-- 图片模态框 -->
+        <div id="imageModal" class="modal">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="modalImage">
+            <div id="modalCaption"></div>
+            <div class="modal-nav">
+                <button id="prevBtn" class="nav-btn" onclick="showPrevImage()">❮</button>
+                <button id="nextBtn" class="nav-btn" onclick="showNextImage()">❯</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // 年份详情页面功能
+let currentImageIndex = 0;
+let imageList = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const year = urlParams.get('year');
+    
+    if (year) {
+        const yearData = timelineData.find(data => data.year.toString() === year);
+        if (yearData) {
+            renderYearDetails(yearData);
+            setupModalListeners();
+        } else {
+            document.getElementById('yearTitle').textContent = '年份不存在';
+        }
+    } else {
+        document.getElementById('yearTitle').textContent = '请选择年份';
+    }
+});
+
+function renderYearDetails(yearData) {
+    document.getElementById('yearTitle').textContent = `${yearData.year}年大事记`;
+    document.getElementById('yearSubtitle').textContent = yearData.summary;
+    
+    const container = document.getElementById('yearTimeline');
+    container.innerHTML = '';
+    
+    yearData.events.forEach(event => {
+        container.appendChild(createEventItem(event, yearData.year));
+    });
+}
+
+function createEventItem(event, year) {
+    const eventItem = document.createElement('div');
+    eventItem.className = 'event-item';
+    
+    const imageHTML = event.image ? 
+        `<img src="照片/${event.image}" alt="${event.description}" class="event-image" onclick="openModal('照片/${event.image}', '${year}年 ${event.date}: ${event.description}')" onerror="this.style.display='none'">` : '';
+    
+    eventItem.innerHTML = `
+        <div class="event-dot importance-${event.importance}"></div>
+        <div class="event-date">${event.date}</div>
+        <div class="event-description">${event.description}</div>
+        ${imageHTML}
+    `;
+    
+    return eventItem;
+}
+
+function goBack() {
+    window.location.href = 'timeline.html';
+}
+
+function getAllImages() {
+    const images = [];
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentYear = urlParams.get('year');
+    
+    if (currentYear) {
+        const yearData = timelineData.find(data => data.year.toString() === currentYear);
+        if (yearData) {
+            yearData.events.forEach(event => {
+                if (event.image) {
+                    images.push({
+                        src: `照片/${event.image}`,
+                        caption: `${yearData.year}年 ${event.date}: ${event.description}`
+                    });
+                }
+            });
+        }
+    }
+    return images;
+}
+
+function openModal(imageSrc, caption) {
+    imageList = getAllImages();
+    currentImageIndex = imageList.findIndex(img => img.src === imageSrc);
+    
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const captionText = document.getElementById('modalCaption');
+    
+    modal.style.display = 'block';
+    modalImg.src = imageSrc;
+    captionText.innerHTML = caption;
+    
+    updateNavButtons();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    const modal = document.getElementById('imageModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+function showNextImage() {
+    if (currentImageIndex < imageList.length - 1) {
+        currentImageIndex++;
+        updateModalImage();
+    }
+}
+
+function showPrevImage() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+        updateModalImage();
+    }
+}
+
+function updateModalImage() {
+    const modalImg = document.getElementById('modalImage');
+    const captionText = document.getElementById('modalCaption');
+    
+    modalImg.src = imageList[currentImageIndex].src;
+    captionText.innerHTML = imageList[currentImageIndex].caption;
+    
+    updateNavButtons();
+}
+
+function updateNavButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    prevBtn.disabled = currentImageIndex === 0;
+    nextBtn.disabled = currentImageIndex === imageList.length - 1;
+}
+
+function setupModalListeners() {
+    window.onclick = function(event) {
+        const modal = document.getElementById('imageModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+    
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('imageModal');
+        
+        if (modal.style.display === 'block') {
+            switch(e.key) {
+                case 'Escape': closeModal(); break;
+                case 'ArrowLeft': showPrevImage(); break;
+                case 'ArrowRight': showNextImage(); break;
+            }
+        }
+    });
+}
+    </script>
+</body>
+</html>
