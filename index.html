@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>南水北调工程 - 国家战略性水利工程</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .intro-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .intro-header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 100%);
+            color: white;
+            padding: 60px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .intro-header h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .intro-header .subtitle {
+            font-size: 1.4em;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .intro-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .intro-text {
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #333;
+        }
+        
+        .intro-text h2 {
+            color: #1e5799;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1e5799;
+            padding-bottom: 10px;
+        }
+        
+        .intro-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .timeline-preview {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .timeline-preview h2 {
+            color: #1e5799;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-year {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .timeline-year:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            background: #1e5799;
+            color: white;
+        }
+        
+        .timeline-year .year {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-year .events {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .enter-button {
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(30, 87, 153, 0.3);
+        }
+        
+        .enter-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 87, 153, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .intro-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .intro-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+            
+            .intro-header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-container">
+        <div class="intro-header">
+            <h1 style="font-family: '草书', 'CaoShu', cursive; font-size: 4em;">南水北调工程</h1>
+            <p class="subtitle" style="color: #cccccc; font-family: '楷体', 'KaiTi', serif;">中华人民共和国的战略性工程 · 一泓清水润泽北方</p>
+        </div>
+        
+        <div class="intro-content">
+            <div class="intro-text">
+                <h2>工程概况</h2>
+                <p><strong>南水北调工程</strong>是中华人民共和国的战略性工程，分东、中、西三条线路。东线工程起点位于江苏扬州江都水利枢纽，中线工程起点位于汉江中上游丹江口水库，受水区域为河南、河北、北京和天津。</p>
+                
+                <p>工程方案构想始于1952年毛泽东主席视察黄河时提出。1958年3月25日，中央政治局在成都召开会议，周恩来总理根据毛泽东主席南水北调的构想和专家们的规划，提议兴建丹江口水利枢纽工程，得到会议的支持和批准。</p>
+                
+                <div style="background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); padding: 20px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #1e5799;">
+                    <h3 style="color: #1e5799; margin-top: 0;">📊 总体规划最终调水规模：448亿立方米</h3>
+                    <div style="font-family: 'Courier New', monospace; line-height: 1.8; color: #333;">
+                        <div style="display: flex; align-items: center; margin: 8px 0;">
+                            <span style="color: #ff6b6b; font-weight: bold;">├──</span>
+                            <span style="margin-left: 8px;"><strong>东线工程</strong>：148亿立方米/年，全长1466.50千米</span>
+                        </div>
+                        <div style="display: flex; align-items: center; margin: 8px 0;">
+                            <span style="color: #4ecdc4; font-weight: bold;">├──</span>
+                            <span style="margin-left: 8px;"><strong>中线工程</strong>：130亿立方米/年，全长1431.945千米</span>
+                        </div>
+                        <div style="display: flex; align-items: center; margin: 8px 0;">
+                            <span style="color: #ffe66d; font-weight: bold;">└──</span>
+                            <span style="margin-left: 8px;"><strong>西线工程</strong>：170亿立方米/年（规划中）</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p>工程规划区涉及人口4.38亿人。东、中线一期工程干线总长2899公里，沿线六省市一级配套支渠约2700公里。</p>
+                
+                <p>2012年9月，南水北调中线工程丹江口库区移民搬迁全面完成。南水北调工程主要解决中国北方地区，尤其是黄淮海流域的水资源短缺问题。</p>
+                
+                <p>截至2022年5月，已成为京津等40多座大中城市280多个县市区超过1.4亿人的主力水源，为沿线50多条河流实施生态补水85亿立方米，为受水区压减地下水超采量50多亿立方米。</p>
+                
+                <p>2025年7月，南水北调东中线一期工程已经累计调水突破800亿立方米，直接受益人口达到1.85亿人。2026年1月15日，南水北调东线一期工程2025—2026年度全线调水工作正式启动。</p>
+            </div>
+            
+            <div class="intro-gallery">
+                <div class="gallery-item">
+                    <img src="照片/1952年，毛泽东主席视察黄河时提出“南水北调”的伟大设想.jpg" alt="毛泽东主席视察黄河">
+                </div>
+                <div class="gallery-item">
+                    <img src="照片/1958年2月27日，周恩来总理（右二）在视察三峡途中，提出将丹江口工程列入第二个五年计划.jpg" alt="周恩来总理视察">
+                </div>
+                <div class="gallery-item">
+                    <img src="照片/1959年12月26日，中共中央政治局委员、国务院副总理李先念（右），在施工现场听取湖北省省长兼丹江口工程总指挥长张体学汇报情况。.jpg" alt="李先念副总理视察">
+                </div>
+                <div class="gallery-item">
+                    <img src="照片/1980年7月，邓小平同志视察丹江口水利枢纽.jpg" alt="邓小平同志视察">
+                </div>
+            </div>
+        </div>
+        
+        <div class="timeline-preview">
+            <h2>历史大事记</h2>
+            <div class="timeline-grid">
+                <div class="timeline-year">
+                    <div class="year">1952</div>
+                    <div class="events">毛泽东提出构想</div>
+                </div>
+                <div class="timeline-year">
+                    <div class="year">1958</div>
+                    <div class="events">丹江口工程启动</div>
+                </div>
+                <div class="timeline-year">
+                    <div class="year">1959</div>
+                    <div class="events">汉江截流成功</div>
+                </div>
+                <div class="timeline-year">
+                    <div class="year">1980</div>
+                    <div class="events">邓小平视察</div>
+                </div>
+                <div class="timeline-year">
+                    <div class="year">1999</div>
+                    <div class="events">江泽民视察</div>
+                </div>
+                <div class="timeline-year">
+                    <div class="year">2000</div>
+                    <div class="events">国务院听取汇报</div>
+                </div>
+            </div>
+            
+            <a href="timeline.html" class="enter-button">进入详细时间轴</a>
+        </div>
+    </div>
+</body>
+</html>

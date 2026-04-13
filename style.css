@@ -1,0 +1,445 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 全局样式 */
+body {
+    font-family: 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 头部样式 */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.header h1 {
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-weight: 300;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    color: #7f8c8d;
+    font-weight: 300;
+}
+
+/* 导航按钮 */
+.back-btn, .back-button {
+    position: absolute;
+    left: 20px;
+    top: 30px;
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    display: inline-block;
+}
+
+.back-btn:hover, .back-button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+}
+
+/* 时间轴样式 */
+.timeline-overview {
+    position: relative;
+    margin: 60px 0;
+    padding: 0 20px;
+}
+
+.timeline-line {
+    position: absolute;
+    left: 50px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, #3498db, #e74c3c);
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.timeline-items {
+    position: relative;
+    z-index: 2;
+}
+
+/* 时间轴项目 */
+.timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+    padding-left: 80px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover {
+    transform: translateX(5px);
+}
+
+.timeline-dot {
+    position: absolute;
+    left: 48px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    background: #3498db;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 3;
+}
+
+.timeline-content {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-content {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.year-number {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.year-summary {
+    font-size: 1em;
+    color: #7f8c8d;
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.year-image {
+    width: 100px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover .year-image {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 年份详情页面 */
+.year-timeline {
+    position: relative;
+    margin: 40px 0;
+    padding-left: 30px;
+}
+
+.year-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, #3498db, #e74c3c);
+    border-radius: 2px;
+}
+
+.event-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    padding-left: 60px;
+}
+
+.event-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.event-dot {
+    position: absolute;
+    left: 20px;
+    top: 25px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 重要性分级 */
+.event-dot.importance-1 { width: 12px; height: 12px; }
+.event-dot.importance-2 { width: 16px; height: 16px; }
+.event-dot.importance-3 { width: 20px; height: 20px; }
+.event-dot.importance-4 { width: 24px; height: 24px; }
+.event-dot.importance-5 { width: 28px; height: 28px; }
+
+.importance-1 { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+.importance-2 { background: linear-gradient(135deg, #f39c12, #f1c40f); }
+.importance-3 { background: linear-gradient(135deg, #e67e22, #f39c12); }
+.importance-4 { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+.importance-5 { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+
+.event-date {
+    font-size: 0.9em;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.event-description {
+    font-size: 1em;
+    color: #2c3e50;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.event-image {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.event-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 图片模态框 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    display: block;
+    margin: auto;
+    max-width: 90%;
+    max-height: 80%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+    from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 1001;
+}
+
+.close-btn:hover {
+    color: #3498db;
+}
+
+#modalCaption {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 16px;
+    border-radius: 5px;
+    max-width: 80%;
+}
+
+.modal-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.nav-btn {
+    pointer-events: all;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    font-size: 24px;
+    padding: 15px 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.nav-btn:hover {
+    background: rgba(52, 152, 219, 0.8);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* 页脚 */
+.footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header h1 {
+        font-size: 2em;
+    }
+    
+    .timeline-overview {
+        padding: 0 10px;
+    }
+    
+    .timeline-line {
+        left: 30px;
+    }
+    
+    .timeline-item {
+        padding-left: 60px;
+    }
+    
+    .timeline-dot {
+        left: 28px;
+    }
+    
+    .event-item {
+        padding-left: 50px;
+    }
+    
+    .event-dot {
+        left: 15px;
+    }
+    
+    .year-image {
+        width: 80px;
+        height: 60px;
+    }
+    
+    .modal-content {
+        max-width: 95%;
+        max-height: 70%;
+    }
+    
+    .close-btn {
+        top: 10px;
+        right: 15px;
+        font-size: 30px;
+    }
+    
+    .nav-btn {
+        padding: 10px 15px;
+        font-size: 20px;
+    }
+    
+    #modalCaption {
+        font-size: 12px;
+        bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.6em;
+    }
+    
+    .subtitle {
+        font-size: 1em;
+    }
+    
+    .timeline-line {
+        left: 20px;
+    }
+    
+    .timeline-item {
+        padding-left: 40px;
+    }
+    
+    .timeline-dot {
+        left: 18px;
+        width: 12px;
+        height: 12px;
+    }
+    
+    .year-image {
+        width: 60px;
+        height: 45px;
+    }
+}
